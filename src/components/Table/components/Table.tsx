@@ -5,6 +5,7 @@ import { CellClickedEvent } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { TableState } from "../../../redux/shared/table.types";
+import "ag-grid-enterprise";
 
 export const Table: FC<TableState> = ({ columnDefs, data, defaultColDef }) => {
   const gridRef = useRef<AgGridReact>(null);
@@ -35,6 +36,7 @@ export const Table: FC<TableState> = ({ columnDefs, data, defaultColDef }) => {
           rowData={rowData}
           columnDefs={_columnDefs}
           defaultColDef={defaultColDef}
+          onRowGroupOpened={console.log}
           rowSelection="multiple"
           onCellClicked={cellClickedListener}
         />

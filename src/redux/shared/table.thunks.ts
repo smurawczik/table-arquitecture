@@ -5,10 +5,11 @@ import { TableState } from "./table.types";
 export const createData = () => {
   let data: TableState["data"] = [];
   for (let i = 0; i < 50; i++) {
+    const age = Math.round(Math.random() * 100).toString();
     data.push({
-      name: "name",
+      name: `name ${age}`,
       lastName: "last anem",
-      age: (Math.random() * 100).toString(),
+      age,
     });
   }
   return data;
@@ -18,6 +19,7 @@ export function createColumnsFromData(data: Record<string, string>[]) {
   const dataKeys = Object.keys(data[0]);
   return dataKeys.map((key) => ({
     field: key,
+    rowGroup: key === "age",
   }));
 }
 
