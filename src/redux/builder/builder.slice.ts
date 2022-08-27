@@ -7,13 +7,18 @@ import {
   tableThunks,
 } from "../shared/table.thunks";
 import { spaceThunks } from "../space/space.thunks";
+import { DEFAULT_TABLE_ID } from "../shared/table.constants";
 
 const initialState: BuilderSliceState = {
-  columnDefs: [],
-  data: [],
-  defaultColDef: {
-    sortable: true,
-    editable: true,
+  tableState: {
+    columnDefs: [],
+    data: [],
+    defaultColDef: {
+      sortable: true,
+      editable: true,
+    },
+    tableId: DEFAULT_TABLE_ID,
+    shouldUpdateFromServer: true,
   },
   dimensions: {
     column: [],
@@ -38,21 +43,25 @@ export const builderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(tableThunks.setTableData.fulfilled, (state, action) => {
-      state.data = action.payload;
+      state.tableState.data = action.payload;
     });
     builder.addCase(
       tableThunks.createColumnsFromData.fulfilled,
       (state, action) => {
-        state.columnDefs = action.payload;
+        state.tableState.columnDefs = action.payload;
       }
     );
     builder.addCase(spaceThunks.goToBuilder.fulfilled, (state, action) => {
+      state.tableState.shouldUpdateFromServer =
+        action.payload.shouldUpdateFromServer;
       if (action.payload.shouldUpdateFromServer) {
-        state.data = createData();
+        state.tableState.data = createData();
       } else {
-        state.data = action.payload.clientData;
+        state.tableState.data = action.payload.clientData;
       }
-      state.columnDefs = createColumnsFromData(state.data);
+      state.tableState.columnDefs = createColumnsFromData(
+        state.tableState.data
+      );
     });
   },
 });

@@ -14,20 +14,21 @@ export const spaceThunks = {
   goToBuilder: createAsyncThunk<
     | {
         shouldUpdateFromServer: true;
-        clientData?: TableState["data"];
+        clientData?: TableState["tableState"]["data"];
       }
     | {
         shouldUpdateFromServer: false;
-        clientData: TableState["data"];
+        clientData: TableState["tableState"]["data"];
       },
-    TableState["data"],
+    TableState["tableState"]["data"],
     {
       dispatch: AppDispatch;
       state: RootState;
     }
-  >("builder/goToSpace", () => {
+  >("builder/goToSpace", (data) => {
     return {
-      shouldUpdateFromServer: true,
+      shouldUpdateFromServer: false,
+      clientData: data,
     };
   }),
 };

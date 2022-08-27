@@ -1,6 +1,7 @@
-import { Button } from "@mui/material";
+import { Button, Chip, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
-import { useEffect } from "react";
+import { CellClickedEvent } from "ag-grid-community";
+import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table } from "../components/Table";
 import { builderThunks } from "../redux/builder/builder.thunks";
@@ -11,20 +12,31 @@ import { TableState } from "../redux/shared/table.types";
 export const TableBuilder = () => {
   const navigate = useNavigate();
 
-  const defaultColDef = useAppSelector((state) => state.builder.defaultColDef);
-  const columnDefs = useAppSelector((state) => state.builder.columnDefs);
-  const data = useAppSelector((state) => state.builder.data);
+  const defaultColDef = useAppSelector(
+    (state) => state.builder.tableState.defaultColDef
+  );
+  const columnDefs = useAppSelector(
+    (state) => state.builder.tableState.columnDefs
+  );
+  const data = useAppSelector((state) => state.builder.tableState.data);
+  const tableId = useAppSelector((state) => state.builder.tableState.tableId);
   const shouldUpdate = useAppSelector(
-    (state) => state.builder.shouldUpdateFromServer
+    (state) => state.builder.tableState.shouldUpdateFromServer
   );
   const dispatch = useAppDispatch();
+
+  const cellClickedListener = useCallback((event: CellClickedEvent) => {
+    console.log("cellClicked", event);
+  }, []);
 
   useEffect(() => {
     const makeTableStructure = async () => {
       if (shouldUpdate) {
         const { payload } = await dispatch(tableThunks.setTableData());
         dispatch(
-          tableThunks.createColumnsFromData(payload as TableState["data"])
+          tableThunks.createColumnsFromData(
+            payload as TableState["tableState"]["data"]
+          )
         );
       }
     };
@@ -34,7 +46,9 @@ export const TableBuilder = () => {
 
   return (
     <div style={{ backgroundColor: red["200"], padding: "8px" }}>
-      <span>This is a builder</span>
+      <Typography>
+        <Chip label="Builder" color="secondary" />
+      </Typography>
       <Button
         sx={{ m: 2 }}
         variant="contained"
@@ -52,6 +66,8 @@ export const TableBuilder = () => {
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         data={data}
+        tableId={tableId}
+        onCellClicked={cellClickedListener}
       />
     </div>
   );

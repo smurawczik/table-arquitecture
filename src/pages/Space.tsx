@@ -12,11 +12,16 @@ export const Space = () => {
 
   const spaceTitle = useAppSelector((state) => state.space.title);
 
-  const defaultColDef = useAppSelector((state) => state.space.defaultColDef);
-  const columnDefs = useAppSelector((state) => state.space.columnDefs);
-  const data = useAppSelector((state) => state.space.data);
+  const defaultColDef = useAppSelector(
+    (state) => state.space.tableState.defaultColDef
+  );
+  const columnDefs = useAppSelector(
+    (state) => state.space.tableState.columnDefs
+  );
+  const data = useAppSelector((state) => state.space.tableState.data);
+  const tableId = useAppSelector((state) => state.space.tableState.tableId);
   const shouldUpdate = useAppSelector(
-    (state) => state.space.shouldUpdateFromServer
+    (state) => state.space.tableState.shouldUpdateFromServer
   );
   const dispatch = useAppDispatch();
 
@@ -25,7 +30,9 @@ export const Space = () => {
       if (shouldUpdate) {
         const { payload } = await dispatch(tableThunks.setTableData());
         dispatch(
-          tableThunks.createColumnsFromData(payload as TableState["data"])
+          tableThunks.createColumnsFromData(
+            payload as TableState["tableState"]["data"]
+          )
         );
       }
     };
@@ -36,7 +43,7 @@ export const Space = () => {
   return (
     <div style={{ backgroundColor: "#ccc", padding: "8px" }}>
       <span>
-        This is a space: <b>{spaceTitle}</b>
+        <b>{spaceTitle}</b>
       </span>
       <Button
         sx={{ m: 2 }}
@@ -63,6 +70,7 @@ export const Space = () => {
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         data={data}
+        tableId={tableId}
       />
     </div>
   );

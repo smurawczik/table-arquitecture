@@ -1,13 +1,21 @@
-import { AgGridReact } from "ag-grid-react";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { AgGridReact, AgGridReactProps } from "ag-grid-react";
+import { FC, useEffect, useRef, useState } from "react";
 
-import { CellClickedEvent } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { TableState } from "../../../redux/shared/table.types";
 import "ag-grid-enterprise";
+import type { TableComponentState } from "../../../redux/shared/table.types";
 
-export const Table: FC<TableState> = ({ columnDefs, data, defaultColDef }) => {
+interface TableInterface
+  extends TableComponentState,
+    Pick<AgGridReactProps, "datasource" | "onCellClicked"> {}
+
+export const Table: FC<TableInterface> = ({
+  columnDefs,
+  data,
+  defaultColDef,
+  onCellClicked,
+}) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<any>(data);
 
@@ -23,10 +31,6 @@ export const Table: FC<TableState> = ({ columnDefs, data, defaultColDef }) => {
   const [_columnDefs, _setColumnDefs] =
     useState<AgGridReact["props"]["columnDefs"]>(columnDefs);
 
-  const cellClickedListener = useCallback((event: CellClickedEvent) => {
-    console.log("cellClicked", event);
-  }, []);
-
   return (
     <div>
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
@@ -36,9 +40,11 @@ export const Table: FC<TableState> = ({ columnDefs, data, defaultColDef }) => {
           rowData={rowData}
           columnDefs={_columnDefs}
           defaultColDef={defaultColDef}
-          onRowGroupOpened={console.log}
+          onRowGroupOpened={(event) => {
+            console.log(event.node.getRoute());
+          }}
           rowSelection="multiple"
-          onCellClicked={cellClickedListener}
+          onCellClicked={onCellClicked}
         />
       </div>
     </div>

@@ -6,13 +6,13 @@ export const builderThunks = {
   goToSpace: createAsyncThunk<
     | {
         shouldUpdateFromServer: true;
-        clientData?: TableState["data"];
+        clientData?: TableState["tableState"]["data"];
       }
     | {
         shouldUpdateFromServer: false;
-        clientData: TableState["data"];
+        clientData: TableState["tableState"]["data"];
       },
-    TableState["data"],
+    TableState["tableState"]["data"],
     {
       dispatch: AppDispatch;
       state: RootState;
